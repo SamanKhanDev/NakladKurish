@@ -33,6 +33,23 @@ app.post('/', async (req, res) => {
   try {
     const data = req.body;
 
+    // --- Helper function to reformat date to YYYY-MM-DD ---
+    const reformatDate = (dateString) => {
+      if (!dateString || typeof dateString !== 'string') {
+        return dateString; // Return as is if empty or not a string
+      }
+      // Check for DD.MM.YYYY format (and optional time)
+      const match = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})(.*)/);
+      if (match) {
+        const day = match[1];
+        const month = match[2];
+        const year = match[3];
+        const rest = match[4] || ''; // handles time part if present
+        return `${year}-${month}-${day}${rest}`.trim();
+      }
+      return dateString; // Return original if format is different
+    };
+
     // --- Authentication with Service Account Key ---
     const credentials = JSON.parse(GOOGLE_CREDENTIALS);
     const auth = new google.auth.GoogleAuth({
@@ -56,7 +73,7 @@ app.post('/', async (req, res) => {
     // --- Prepare Row Data (in the specified order) ---
     const newRow = [
       customId,
-      data.SANA,
+      reformatDate(data.SANA), // Use the reformatted date
       data["BETON_SIG'IMI"],
       data.MARKA,
       data.MIKSER_RAQAM,
