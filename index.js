@@ -18,15 +18,52 @@ app.use(express.json());
 
 // --- Health Check Route ---
 app.get('/', (req, res) => {
-  res.status(200).send('Sahifaga salom run bo\'lomqda');
+  // Check environment variables
+  const configStatus = {
+    SPREADSHEET_ID: SPREADSHEET_ID ? 'SET' : 'MISSING',
+    GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS ? 'SET' : 'MISSING',
+    SHEET_NAME: SHEET_NAME
+  };
+  
+  res.status(200).send(`
+    <h1>Sahifaga salom run bo'lomqda</h1>
+    <h2>Configuration Status:</h2>
+    <ul>
+      <li>SPREADSHEET_ID: ${configStatus.SPREADSHEET_ID}</li>
+      <li>GOOGLE_CREDENTIALS: ${configStatus.GOOGLE_CREDENTIALS}</li>
+      <li>SHEET_NAME: ${configStatus.SHEET_NAME}</li>
+    </ul>
+    <p>${SPREADSHEET_ID && GOOGLE_CREDENTIALS 
+      ? '✅ All required environment variables are set. Service is ready to accept data.' 
+      : '❌ Missing required environment variables. Please configure SPREADSHEET_ID and GOOGLE_CREDENTIALS in Render.'}</p>
+  `);
 });
 
+// --- Configuration Status API ---
+app.get('/config', (req, res) => {
+  const configStatus = {
+    SPREADSHEET_ID: SPREADSHEET_ID ? 'SET' : 'MISSING',
+    GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS ? 'SET' : 'MISSING',
+    SHEET_NAME: SHEET_NAME,
+    allSet: !!(SPREADSHEET_ID && GOOGLE_CREDENTIALS)
+  };
+  
+  res.status(200).json(configStatus);
+});
 
 // --- API Route ---
 app.post('/', async (req, res) => {
   if (!SPREADSHEET_ID || !GOOGLE_CREDENTIALS) {
     console.error("Server configuration error: Missing SPREADSHEET_ID or GOOGLE_CREDENTIALS.");
-    return res.status(500).json({ status: 'error', message: 'Server configuration error.' });
+    return res.status(500).json({ 
+      status: 'error', 
+      message: 'Server configuration error.',
+      details: {
+        SPREADSHEET_ID: SPREADSHEET_ID ? 'SET' : 'MISSING',
+        GOOGLE_CREDENTIALS: GOOGLE_CREDENTIALS ? 'SET' : 'MISSING'
+      },
+      solution: 'Please set SPREADSHEET_ID and GOOGLE_CREDENTIALS environment variables in Render dashboard.'
+    });
   }
   
   try {
