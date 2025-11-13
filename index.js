@@ -5,7 +5,7 @@ const cors = require('cors');
 // --- Configuration ---
 // These values should be set as environment variables in your Render service.
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = process.env.SHEET_NAME || 'Accept';
+const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
 // FIX: Use the correct environment variable key as configured by the user in Render.
 const GOOGLE_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
@@ -56,7 +56,9 @@ app.post('/', async (req, res) => {
     // --- Prepare Row Data (in the specified order) ---
     const newRow = [
       customId,
-      data.SANA, // Save the date exactly as received
+      // Prepending a single quote tells Google Sheets to treat this as a literal string
+      // and prevents it from auto-formatting it into a different date format.
+      `'${data.SANA}`,
       data["BETON_SIG'IMI"],
       data.MARKA,
       data.MIKSER_RAQAM,
