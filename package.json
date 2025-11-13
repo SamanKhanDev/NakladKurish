@@ -1,0 +1,13 @@
+{
+  "name": "sheets-writer-service",
+  "version": "1.0.0",
+  "description": "Cloud Run service to append data to Google Sheets.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "googleapis": "^105.0.0"
+  }
+}

@@ -1,0 +1,17 @@
+# Environment variables
+.env
+
+# Node.js
+node_modules/
+
+# Logs
+*.log
+
+# Optional npm cache
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env*.local
