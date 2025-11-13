@@ -33,21 +33,36 @@ app.post('/', async (req, res) => {
   try {
     const data = req.body;
 
-    // --- Helper function to reformat date to YYYY-MM-DD ---
+    // --- Helper function to reformat date to DD.MM.YYYY ---
     const reformatDate = (dateString) => {
       if (!dateString || typeof dateString !== 'string') {
         return dateString; // Return as is if empty or not a string
       }
-      // Check for DD.MM.YYYY format (and optional time)
-      const match = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})(.*)/);
+      
+      let date;
+      // Attempt to parse YYYY-MM-DD format (expected from Gemini)
+      let match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
       if (match) {
-        const day = match[1];
-        const month = match[2];
-        const year = match[3];
-        const rest = match[4] || ''; // handles time part if present
-        return `${year}-${month}-${day}${rest}`.trim();
+        // new Date(year, monthIndex, day)
+        date = new Date(match[1], parseInt(match[2], 10) - 1, match[3]);
+      } else {
+        // Fallback to parse DD.MM.YYYY format
+        match = dateString.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+        if (match) {
+          // new Date(year, monthIndex, day)
+          date = new Date(match[3], parseInt(match[2], 10) - 1, match[1]);
+        }
       }
-      return dateString; // Return original if format is different
+
+      if (date && !isNaN(date)) {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        // Format to DD.MM.YYYY as requested
+        return `${day}.${month}.${year}`;
+      }
+      
+      return dateString; // Return original if format is not recognized
     };
 
     // --- Authentication with Service Account Key ---
