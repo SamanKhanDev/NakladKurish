@@ -63,11 +63,12 @@ app.post('/', async (req, res) => {
       data.NAKLADNOY_RAQAMI,
     ];
 
-    // --- Append to Google Sheet (Naturally finds the bottom row) ---
+    // --- Append to Google Sheet ---
+    // Using '!A1' tells the API to start looking for the table from the very first cell.
+    // This is crucial for correctly identifying the last filled row.
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      // Using just the sheet name is the most reliable way to append to the bottom
-      range: SHEET_NAME, 
+      range: `${SHEET_NAME}!A1`, 
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [newRow],
