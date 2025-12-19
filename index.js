@@ -63,13 +63,15 @@ app.post('/', async (req, res) => {
       data.NAKLADNOY_RAQAMI,
     ];
 
-    // --- Append to Google Sheet ---
-    // Using '!A1' tells the API to start looking for the table from the very first cell.
-    // This is crucial for correctly identifying the last filled row.
+    // --- Append to Google Sheet (With Row Insertion Logic) ---
+    // range: SHEET_NAME - tells API to look at the whole sheet.
+    // insertDataOption: 'INSERT_ROWS' - forces the API to create new rows at the bottom.
+    // valueInputOption: 'USER_ENTERED' - treats the data as if typed by a user (e.g., date formats).
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A1`, 
+      range: SHEET_NAME, 
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: [newRow],
       },
