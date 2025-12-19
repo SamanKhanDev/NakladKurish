@@ -5,7 +5,7 @@ const cors = require('cors');
 // --- Configuration ---
 // These values should be set as environment variables in your Render service.
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = process.env.SHEET_NAME || 'Accept';
+const SHEET_NAME = process.env.SHEET_NAME || 'Accept2';
 // FIX: Use the correct environment variable key as configured by the user in Render.
 const GOOGLE_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
