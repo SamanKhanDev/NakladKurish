@@ -3,17 +3,13 @@ const { google } = require('googleapis');
 const cors = require('cors');
 
 // --- Configuration ---
-// These values should be set as environment variables in your Render service.
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME || 'Accept2';
-// FIX: Use the correct environment variable key as configured by the user in Render.
 const GOOGLE_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 
 // --- Express App Setup ---
 const app = express();
-// FIX: Use a more permissive CORS policy to allow requests from any origin.
-// This resolves the "Failed to fetch" error commonly seen in browser-based clients.
 app.use(cors());
 app.use(express.json());
 
@@ -53,11 +49,9 @@ app.post('/', async (req, res) => {
     const random = Math.floor(100000 + Math.random() * 900000).toString();
     const customId = `${year}${month}${day}${hours}${minutes}${seconds}${random}`;
 
-    // --- Prepare Row Data (in the specified order) ---
+    // --- Prepare Row Data ---
     const newRow = [
       customId,
-      // Prepending a single quote tells Google Sheets to treat this as a literal string
-      // and prevents it from auto-formatting it into a different date format.
       `'${data.SANA}`,
       data["BETON_SIG'IMI"],
       data.MARKA,
@@ -69,12 +63,12 @@ app.post('/', async (req, res) => {
       data.NAKLADNOY_RAQAMI,
     ];
 
-    // --- Append to Google Sheet ---
+    // --- Append to Google Sheet (Naturally finds the bottom row) ---
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: SHEET_NAME,
+      // Using just the sheet name is the most reliable way to append to the bottom
+      range: SHEET_NAME, 
       valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: [newRow],
       },
@@ -88,8 +82,6 @@ app.post('/', async (req, res) => {
   }
 });
 
-// --- Server Listener ---
-// Render provides the PORT environment variable.
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
