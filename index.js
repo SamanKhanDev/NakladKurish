@@ -4,7 +4,7 @@ const cors = require('cors');
 
 // --- Configuration ---
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = process.env.SHEET_NAME || 'Accept2';
+const SHEET_NAME = process.env.SHEET_NAME || 'Accept';
 const GOOGLE_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
 
