@@ -50,29 +50,31 @@ app.post('/', async (req, res) => {
     const customId = `${year}${month}${day}${hours}${minutes}${seconds}${random}`;
 
     // --- Prepare Row Data ---
-    // Tartib: ID, SANA, BETON_SIG'IMI, MARKA, MIKSER_RAQAM, NASOS_RAQAM, SHAFYOR_ISM, FIRMA, PLASHADKA, NAKLADNOY_RAQAMI
+    // A=ID, B=SANA, C=BETON_SIG'IMI, D=MARKA, E=MIKSER_RAQAM, F=NASOS_RAQAM, G=SHAFYOR_ISM, H=FIRMA, I=PLASHADKA, J=NAKLADNOY_RAQAMI
     const newRow = [
-      customId,             // A ustuni uchun
-      `'${data.SANA}`,      // B ustuni uchun
-      data["BETON_SIG'IMI"],// C ustuni uchun
-      data.MARKA,           // D ustuni uchun
-      data.MIKSER_RAQAM,    // E ustuni uchun
-      data.NASOS_RAQAM,     // F ustuni uchun
-      data.SHAFYOR_ISM,     // G ustuni uchun
-      data.FIRMA,           // H ustuni uchun
-      data.PLASHADKA,       // I ustuni uchun
-      data.NAKLADNOY_RAQAMI,// J ustuni uchun
+      customId,
+      `'${data.SANA}`,
+      data["BETON_SIG'IMI"],
+      data.MARKA,
+      data.MIKSER_RAQAM,
+      data.NASOS_RAQAM,
+      data.SHAFYOR_ISM,
+      data.FIRMA,
+      data.PLASHADKA,
+      data.NAKLADNOY_RAQAMI,
     ];
 
     // --- Append to Google Sheet ---
-    // Range: '!A:J' - Bu API-ga faqat birinchi 10 ta ustunni tekshirishni aytadi.
-    // Bu ma'lumotlarni o'ngga surilib ketishini va boshqa ustunlar bo'yicha 
-    // adashib ketishini oldini oladi.
+    // range: '!A:A' -> API-ga faqat A ustunini tekshirib, oxirgi qatorni topishni aytadi.
+    // insertDataOption: 'INSERT_ROWS' -> BU MUHIM: API mavjud bo'shliqlarni to'ldirmaydi, 
+    // balki yangi qator qo'shadi. Bu G ustuniga surilib ketishni butunlay to'xtatadi.
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:J`, 
+      range: `${SHEET_NAME}!A:A`, 
       valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
+        majorDimension: 'ROWS',
         values: [newRow],
       },
     });
