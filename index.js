@@ -63,15 +63,15 @@ app.post('/', async (req, res) => {
       data.NAKLADNOY_RAQAMI,
     ];
 
-    // --- Append to Google Sheet (With Row Insertion Logic) ---
-    // range: SHEET_NAME - tells API to look at the whole sheet.
-    // insertDataOption: 'INSERT_ROWS' - forces the API to create new rows at the bottom.
-    // valueInputOption: 'USER_ENTERED' - treats the data as if typed by a user (e.g., date formats).
+    // --- Append to Google Sheet ---
+    // Diapazonni faqat SHEET_NAME (masalan 'Sheet1') qilib belgilash API-ga
+    // jadvaldagi istalgan ustunda mavjud bo'lgan eng oxirgi ma'lumotdan keyingi
+    // bo'sh qatorni topishga imkon beradi. Bu A ustunidagi bo'shliqlardan
+    // qat'i nazar, ma'lumotni eng pastga qo'shadi.
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: SHEET_NAME, 
       valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: [newRow],
       },
